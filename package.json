@@ -35,7 +35,7 @@
     "dist",
     "strategies",
     ".env.example",
-    "README.md"
+    "readme.md"
   ],
   "scripts": {
     "dev": "node src/index.js",
