@@ -1,0 +1,63 @@
+{
+  "name": "tastytradebot_allocation",
+  "version": "0.1.0",
+  "description": "Portfolio allocation bot for tastytrade (ECMAScript)",
+  "keywords": [
+    "tasty",
+    "trade",
+    "bot",
+    "allocation"
+  ],
+  "license": "MIT",
+  "author": "lucmig",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./bot": {
+      "import": "./dist/bot.js",
+      "default": "./dist/bot.js"
+    },
+    "./config": {
+      "import": "./dist/config.js",
+      "default": "./dist/config.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "allocation": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "strategies",
+    ".env.example",
+    "README.md"
+  ],
+  "scripts": {
+    "dev": "node src/index.js",
+    "start": "node dist/index.js",
+    "allocation": "node dist/index.js --strategy strategies/planA.json",
+    "build": "vite build",
+    "prepack": "npm run build",
+    "prepublishOnly": "npm test && npm run build",
+    "pack:dist": "npm pack",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@tastytrade/api": "^7.0.2",
+    "commander": "^13.1.0",
+    "dotenv": "^16.5.0"
+  },
+  "devDependencies": {
+    "vite": "^6.3.5",
+    "vitest": "^3.2.7"
+  }
+}
