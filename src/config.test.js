@@ -90,15 +90,17 @@ describe("createAsset", () => {
 
 describe("loadStrategy", () => {
     it("loads types from strategy JSON", () => {
-        const path = writeStrategy([
-            {
-                step: 1,
-                assets: [
-                    { symbol: "BTCI", type: "Equity", target: 6000 },
-                    { symbol: "BTC/USD", type: "Cryptocurrency", target: 1 },
-                ],
-            },
-        ]);
+        const path = writeStrategy({
+            steps: [
+                {
+                    step: 1,
+                    assets: [
+                        { symbol: "BTCI", type: "Equity", target: 6000 },
+                        { symbol: "BTC/USD", type: "Cryptocurrency", target: 1 },
+                    ],
+                },
+            ],
+        });
 
         const assets = loadStrategy(path);
         expect(assets).toHaveLength(2);
@@ -116,27 +118,43 @@ describe("loadStrategy", () => {
     });
 
     it("rejects strategy assets without type", () => {
-        const path = writeStrategy([
-            {
-                step: 1,
-                assets: [{ symbol: "BTCI", target: 6000 }],
-            },
-        ]);
+        const path = writeStrategy({
+            steps: [
+                {
+                    step: 1,
+                    assets: [{ symbol: "BTCI", target: 6000 }],
+                },
+            ],
+        });
 
         expect(() => loadStrategy(path)).toThrow(/Missing instrument type.*BTCI/);
     });
 
     it("rejects invalid type values in strategy", () => {
-        const path = writeStrategy([
-            {
-                step: 2,
-                assets: [{ symbol: "DIVO", type: "ETF", target: 5000 }],
-            },
-        ]);
+        const path = writeStrategy({
+            steps: [
+                {
+                    step: 2,
+                    assets: [{ symbol: "DIVO", type: "ETF", target: 5000 }],
+                },
+            ],
+        });
 
         expect(() => loadStrategy(path)).toThrow(
             /Invalid instrument type "ETF".*DIVO.*step 2/,
         );
+    });
+
+    it("rejects a top-level array", () => {
+        const path = writeStrategy([
+            { step: 1, assets: [{ symbol: "BTCI", type: "Equity", target: 1 }] },
+        ]);
+        expect(() => loadStrategy(path)).toThrow(/must be a JSON object/);
+    });
+
+    it("rejects an object without steps", () => {
+        const path = writeStrategy({ name: "planA" });
+        expect(() => loadStrategy(path)).toThrow(/must have a "steps" array/);
     });
 
     it("loads the repo planA strategy successfully", () => {

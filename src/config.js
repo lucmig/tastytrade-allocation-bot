@@ -129,14 +129,16 @@ export function createAsset({
  *
  * Expected shape:
  * ```json
- * [
- *   {
- *     "step": 1,
- *     "assets": [
- *       { "symbol": "BTCI", "type": "Equity", "target": 6000 }
- *     ]
- *   }
- * ]
+ * {
+ *   "steps": [
+ *     {
+ *       "step": 1,
+ *       "assets": [
+ *         { "symbol": "BTCI", "type": "Equity", "target": 6000 }
+ *       ]
+ *     }
+ *   ]
+ * }
  * ```
  *
  * @param {string} filePath
@@ -146,13 +148,16 @@ export function loadStrategy(filePath) {
     const absolute = resolve(filePath);
     const raw = JSON.parse(readFileSync(absolute, "utf8"));
 
-    if (!Array.isArray(raw)) {
-        throw new Error(`Strategy file must be a JSON array: ${absolute}`);
+    if (raw == null || typeof raw !== "object" || Array.isArray(raw)) {
+        throw new Error(`Strategy file must be a JSON object: ${absolute}`);
+    }
+    if (!Array.isArray(raw.steps)) {
+        throw new Error(`Strategy file must have a "steps" array: ${absolute}`);
     }
 
     /** @type {Asset[]} */
     const assets = [];
-    for (const group of raw) {
+    for (const group of raw.steps) {
         const step = Number(group.step ?? 1);
         const items = Array.isArray(group.assets) ? group.assets : [];
         items.forEach((item, index) => {

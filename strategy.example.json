@@ -1,27 +1,29 @@
-[
-    {
-        "step": 1,
-        "assets": [
-            {
-                "symbol": "JEPQ",
-                "type": "Equity",
-                "target": 7000
-            },
-            {
-                "symbol": "VOO",
-                "type": "Equity",
-                "target": 1000
-            }
-        ]
-    },
-    {
-        "step": 2,
-        "assets": [
-            {
-                "symbol": "ARKK",
-                "type": "Equity",
-                "target": 2000
-            }
-        ]
-    }
-]
+{
+    "steps": [
+        {
+            "step": 1,
+            "assets": [
+                {
+                    "symbol": "JEPQ",
+                    "type": "Equity",
+                    "target": 7000
+                },
+                {
+                    "symbol": "VOO",
+                    "type": "Equity",
+                    "target": 1000
+                }
+            ]
+        },
+        {
+            "step": 2,
+            "assets": [
+                {
+                    "symbol": "ARKK",
+                    "type": "Equity",
+                    "target": 2000
+                }
+            ]
+        }
+    ]
+}
