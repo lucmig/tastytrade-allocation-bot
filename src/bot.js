@@ -33,10 +33,10 @@ export async function runBot(settings, logger) {
         await client.httpClient.generateAccessToken();
         logger.info("Successfully connected to tastytrade!");
 
-        // if (!(await isMarketOpen(client, logger))) {
-        //     logger.error("Market is closed. Exiting bot cycle.\n");
-        //     return;
-        // }
+        if (!(await isMarketOpen(client, logger)) && settings.paperTrade !== true) {
+            logger.error("Market is closed. Exiting bot cycle.\n");
+            return;
+        }
 
         const account = await client.accountsAndCustomersService.getFullCustomerAccountResource(
             accountNumber,
@@ -139,18 +139,20 @@ export async function runBot(settings, logger) {
 export function planBuys(stepAssets, totalUnits, availableCash, logger) {
     let outOfFunds = false;
     let cash = availableCash;
+    let newTotalUnits = totalUnits;
 
     while (!outOfFunds) {
         let madeProgress = false;
         for (const asset of stepAssets) {
-            const weight = totalUnits > 0 ? (asset.units + asset.buyUnits) / totalUnits : 0;
+            const weight = newTotalUnits > 0 ? (asset.units + asset.buyUnits) / newTotalUnits : 0;
             asset.currentWeight = weight;
 
-            if (weight < asset.targetWeight && cash > asset.currentPrice) {
+            if (weight <= asset.targetWeight && cash > asset.currentPrice) {
                 asset.buyUnits += 1;
                 cash -= Number(asset.currentPrice);
+                newTotalUnits += 1;
                 madeProgress = true;
-            } else if (weight < asset.targetWeight && cash <= asset.currentPrice) {
+            } else if (weight <= asset.targetWeight && cash <= asset.currentPrice) {
                 if (asset.buyUnits === 0) {
                     logger.info(`Not enough cash to buy ${asset.symbol}`);
                 }
